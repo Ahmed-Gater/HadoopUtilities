@@ -1,5 +1,7 @@
 package org.ag.hbase.util.admin;
 
+import org.ag.hbase.conf.ColumnFamilyConfig;
+import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Admin;
@@ -22,9 +24,9 @@ public class AdminUtils {
         this.hbaseAdmin = this.hbaseConnection.getAdmin();
     }
 
-    public boolean createTable(String nameSpace, String name, List<String> columnFamilies, ColumnFamilyBuilder cgBuilder){
+    public boolean createTable(String nameSpace, String name, List<String> columnFamilies, ColumnFamilyConfig cfConf){
         HTableDescriptor desc = new HTableDescriptor(TableName.valueOf(nameSpace,name)) ;
-        columnFamilies.stream().forEach(x->desc.addFamily(cgBuilder.build(x)));
+        columnFamilies.stream().forEach(x->desc.addFamily(buildColumnFamily(x,cfConf)));
         try {
             this.hbaseAdmin.createTable(desc);
             return true ;
@@ -33,6 +35,14 @@ public class AdminUtils {
         }
     }
 
+    private HColumnDescriptor buildColumnFamily(String cfNale, ColumnFamilyConfig cgBuilder){
+
+            return new HColumnDescriptor(cfNale)
+                    .setVersions(cgBuilder.getMinVersion(),cgBuilder.getMaxVersion())
+                    .setBloomFilterType(cgBuilder.getBloom())
+                    .setCompactionCompressionType(cgBuilder.getCompressionAlgo()) ;
+
+    }
     public boolean deleteTable(String namespace, String name){
         try {
             this.hbaseAdmin.disableTable(TableName.valueOf(namespace,name));

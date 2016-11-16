@@ -10,12 +10,22 @@ import org.junit.Test;
  */
 public class AdminUtilsTest {
     @Test
-    public void createTable() throws Exception {
+    public void createTableTest() throws Exception {
         Connection conn = new HBaseConnectionBuilder("localhost:2181").sessionTimeOut(12000).build() ;
-        ColumnFamilyBuilder h = new ColumnFamilyBuilder() ;
         AdminUtils admUtil = new AdminUtils(conn) ;
-        admUtil.createTable("default","test2", ImmutableList.of("cf1", "cf2"),h) ;
+        admUtil.createTable("default","test2", ImmutableList.of("cf1", "cf2"),new ColumnFamilyBuilder()) ;
         Assert.assertTrue(admUtil.tables().contains("test2"));
+        admUtil.deleteTable("default","test2") ;
+    }
+
+
+    @Test
+    public void deleteTableTest() throws Exception {
+        Connection conn = new HBaseConnectionBuilder("localhost:2181").sessionTimeOut(12000).build() ;
+        AdminUtils admUtil = new AdminUtils(conn) ;
+        admUtil.createTable("default","test2", ImmutableList.of("cf1", "cf2"),new ColumnFamilyBuilder()) ;
+        admUtil.deleteTable("default","test2") ;
+        Assert.assertFalse(admUtil.tables().contains("test2"));
     }
 
 }

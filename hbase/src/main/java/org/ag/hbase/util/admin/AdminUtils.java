@@ -22,13 +22,6 @@ public class AdminUtils {
         this.hbaseAdmin = this.hbaseConnection.getAdmin();
     }
 
-    public static void main(String[] args) throws IOException {
-        Connection conn = new HBaseConnectionBuilder("localhost:2181").sessionTimeOut(12000).build() ;
-        AdminUtils admUtil = new AdminUtils(conn) ;
-        admUtil.tables().forEach(x->System.out.println(x));
-    }
-
-
     public boolean createTable(String nameSpace, String name, List<String> columnFamilies, ColumnFamilyBuilder cgBuilder){
         HTableDescriptor desc = new HTableDescriptor(TableName.valueOf(nameSpace,name)) ;
         columnFamilies.stream().forEach(x->desc.addFamily(cgBuilder.build(x)));
@@ -40,6 +33,15 @@ public class AdminUtils {
         }
     }
 
+    public boolean deleteTable(String namespace, String name){
+        try {
+            this.hbaseAdmin.disableTable(TableName.valueOf(namespace,name));
+            this.hbaseAdmin.deleteTable(TableName.valueOf(namespace,name));
+            return true ;
+        } catch (IOException e) {
+            return false ;
+        }
+    }
     public Set<String> tables() {
         try{
             return Arrays.stream(this.hbaseAdmin.listTableNames())

@@ -1,30 +1,29 @@
-package org.ag.hbase.util.admin;
+package org.ag.hbase.conf;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.client.ConnectionFactory;
-import org.apache.hadoop.hbase.client.Connection;
 
 import java.io.IOException;
 
 /**
  * Created by ahmed.gater on 16/11/2016.
  */
-public class HBaseConnectionBuilder {
+public class HBaseConfigBuilder {
     Configuration conf;
 
-    public HBaseConnectionBuilder(String zkConnectionString) {
+    public HBaseConfigBuilder(String zkConnectionString) {
         this.conf = new Configuration();
         this.conf.set("hbase.zookeeper.quorum", extractQuorum(zkConnectionString));
         this.conf.set("hbase.zookeeper.property.clientPort", extractPort(zkConnectionString));
+        this.conf.set("hbase.master", "localhost:60010");
     }
 
-    public HBaseConnectionBuilder sessionTimeOut(int timeout) {
+    public HBaseConfigBuilder sessionTimeOut(int timeout) {
         this.conf.setInt("timeout", timeout);
         return this;
     }
 
-    public Connection build() throws IOException {
-        return ConnectionFactory.createConnection(this.conf);
+    public Configuration config() throws IOException {
+        return this.conf ;
     }
 
     public String extractPort(String zkConnectionString){

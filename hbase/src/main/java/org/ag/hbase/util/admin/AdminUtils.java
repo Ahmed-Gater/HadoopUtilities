@@ -19,8 +19,9 @@ import java.util.stream.Collectors;
 public class AdminUtils {
     Connection hbaseConnection ;
     Admin hbaseAdmin ;
+
     public AdminUtils(Connection hbaseConn) throws IOException {
-        this.hbaseConnection = hbaseConn ;
+        this.hbaseConnection = hbaseConn;
         this.hbaseAdmin = this.hbaseConnection.getAdmin();
     }
 
@@ -54,6 +55,7 @@ public class AdminUtils {
     }
     public Set<String> tables() {
         try{
+
             return Arrays.stream(this.hbaseAdmin.listTableNames())
                     .map(x -> x.getNameAsString())
                     .collect(Collectors.toSet());
@@ -62,5 +64,6 @@ public class AdminUtils {
             return null ;
         }
     }
+
 
 }

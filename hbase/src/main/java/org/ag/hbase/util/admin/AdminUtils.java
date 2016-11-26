@@ -55,7 +55,6 @@ public class AdminUtils {
     }
     public Set<String> tables() {
         try{
-
             return Arrays.stream(this.hbaseAdmin.listTableNames())
                     .map(x -> x.getNameAsString())
                     .collect(Collectors.toSet());
@@ -65,5 +64,16 @@ public class AdminUtils {
         }
     }
 
+    public Set<String> columnFamilies(String tableName){
+        try {
+            return Arrays.stream(this.hbaseAdmin.getTableDescriptor(TableName.valueOf(tableName))
+                    .getColumnFamilies())
+                    .map(x->x.getNameAsString())
+                    .collect(Collectors.toSet());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null ;
+        }
+    }
 
 }

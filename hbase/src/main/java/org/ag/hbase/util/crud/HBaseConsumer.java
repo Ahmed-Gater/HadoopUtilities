@@ -1,15 +1,8 @@
 package org.ag.hbase.util.crud;
 
-import org.ag.hbase.conf.HBaseConnectionBuilder;
-import org.ag.hbase.util.admin.AdminUtils;
-import org.apache.hadoop.hbase.Cell;
-import org.apache.hadoop.hbase.CellScanner;
-import org.apache.hadoop.hbase.CellUtil;
-import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.*;
 import org.apache.hadoop.hbase.client.*;
-import org.apache.hadoop.hbase.filter.ColumnPrefixFilter;
 import org.apache.hadoop.hbase.filter.Filter;
-import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.hbase.util.Pair;
 import org.javatuples.Quartet;
 
@@ -19,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by ahmed.gater on 23/11/2016.
@@ -27,11 +21,28 @@ public class HBaseConsumer {
 
     Table table;
     Set<String> columnFamilies ;
-    public HBaseConsumer(Connection conn, String tablename) {
 
+    public HBaseConsumer(Table table) {
+        try {
+            this.table = table;
+            this.columnFamilies = this.table.getTableDescriptor()
+                                            .getFamilies()
+                                            .stream()
+                                            .map(HColumnDescriptor::getNameAsString)
+                                            .collect(Collectors.toSet());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public HBaseConsumer(Connection conn, String tablename) {
         try {
             table = conn.getTable(TableName.valueOf(tablename));
-            this.columnFamilies = new AdminUtils(conn).columnFamilies(tablename) ;
+            this.columnFamilies = this.table.getTableDescriptor()
+                    .getFamilies()
+                    .stream()
+                    .map(HColumnDescriptor::getNameAsString)
+                    .collect(Collectors.toSet());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -121,23 +132,5 @@ public class HBaseConsumer {
             e.printStackTrace();
         }
         return qrts;
-    }
-
-    public static void main(String[] args) throws Exception {
-        HBaseConsumer g = new HBaseConsumer(new HBaseConnectionBuilder("quickstart.cloudera:2181").build(), "t1");
-        List<Filter> filters = new ArrayList<>() ;
-        ColumnPrefixFilter colFil = new ColumnPrefixFilter(Bytes.toBytes("acol")) ;
-        filters.add(colFil);
-        List<Quartet<String, String, String, String>> scan = g.scan("k", "l",null,filters);
-        System.out.println(scan.size());
-        for(Quartet<String, String, String, String> a : scan){
-            System.out.println(a) ;
-        }
-
-        /*
-        List<Pair<String, String>> famQuals = new ArrayList<>();
-        famQuals.add(new Pair<>("cf1", "col1"));
-        System.out.println(g.getRecords("key1", famQuals));
-        */
     }
 }

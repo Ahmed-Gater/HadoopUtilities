@@ -27,11 +27,11 @@ public class HBaseConnectionBuilder {
         return ConnectionFactory.createConnection(conf);
     }
 
-    public String extractPort(String zkConnectionString){
-        return zkConnectionString.split(":")[1] ;
+    public String extractPort(String zkConnectionString) {
+        return zkConnectionString.split(":")[1];
     }
 
-    public String extractQuorum(String zkConnectionString){
-        return zkConnectionString.split(":")[0] ;
+    public String extractQuorum(String zkConnectionString) {
+        return zkConnectionString.split(":")[0];
     }
 }

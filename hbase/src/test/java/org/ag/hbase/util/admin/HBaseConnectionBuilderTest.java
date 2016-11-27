@@ -1,6 +1,6 @@
 package org.ag.hbase.util.admin;
 
-import org.ag.hbase.util.admin.HBaseConnectionBuilder;
+import org.ag.hbase.conf.HBaseConfigBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,14 +11,14 @@ public class HBaseConnectionBuilderTest {
 
     @Test
     public void extractPort() throws Exception {
-        HBaseConnectionBuilder conn = new HBaseConnectionBuilder("localhost:2181");
-        Assert.assertEquals(conn.extractPort("localhost:2181"),"2181");
+        HBaseConfigBuilder conn = new HBaseConfigBuilder("localhost:2181");
+        Assert.assertEquals(conn.extractPort("localhost:2181"), "2181");
     }
 
     @Test
     public void extractQuorum() throws Exception {
-        HBaseConnectionBuilder conn = new HBaseConnectionBuilder("localhost:2181");
-        Assert.assertEquals(conn.extractQuorum("localhost:2181"),"localhost");
+        HBaseConfigBuilder conn = new HBaseConfigBuilder("localhost:2181");
+        Assert.assertEquals(conn.extractQuorum("localhost:2181"), "localhost");
     }
 
 }

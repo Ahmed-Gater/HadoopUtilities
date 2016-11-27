@@ -17,62 +17,62 @@ import java.util.stream.Collectors;
  * Created by ahmed.gater on 16/11/2016.
  */
 public class AdminUtils {
-    Connection hbaseConnection ;
-    Admin hbaseAdmin ;
+    Connection hbaseConnection;
+    Admin hbaseAdmin;
 
     public AdminUtils(Connection hbaseConn) throws IOException {
         this.hbaseConnection = hbaseConn;
         this.hbaseAdmin = this.hbaseConnection.getAdmin();
     }
 
-    public boolean createTable(String nameSpace, String name, List<String> columnFamilies, ColumnFamilyConfig cfConf){
-        HTableDescriptor desc = new HTableDescriptor(TableName.valueOf(nameSpace,name)) ;
-        columnFamilies.stream().forEach(x->desc.addFamily(buildColumnFamily(x,cfConf)));
+    public boolean createTable(String nameSpace, String name, List<String> columnFamilies, ColumnFamilyConfig cfConf) {
+        HTableDescriptor desc = new HTableDescriptor(TableName.valueOf(nameSpace, name));
+        columnFamilies.stream().forEach(x -> desc.addFamily(buildColumnFamily(x, cfConf)));
         try {
             this.hbaseAdmin.createTable(desc);
-            return true ;
+            return true;
         } catch (IOException e) {
             return false;
         }
     }
 
-    private HColumnDescriptor buildColumnFamily(String cfNale, ColumnFamilyConfig cgBuilder){
-
-            return new HColumnDescriptor(cfNale)
-                    .setVersions(cgBuilder.getMinVersion(),cgBuilder.getMaxVersion())
-                    .setBloomFilterType(cgBuilder.getBloom())
-                    .setCompactionCompressionType(cgBuilder.getCompressionAlgo()) ;
+    private HColumnDescriptor buildColumnFamily(String cfNale, ColumnFamilyConfig cgBuilder) {
+        return new HColumnDescriptor(cfNale)
+                .setVersions(cgBuilder.getMinVersion(), cgBuilder.getMaxVersion())
+                .setBloomFilterType(cgBuilder.getBloom())
+                .setCompactionCompressionType(cgBuilder.getCompressionAlgo());
 
     }
-    public boolean deleteTable(String namespace, String name){
+
+    public boolean deleteTable(String namespace, String name) {
         try {
-            this.hbaseAdmin.disableTable(TableName.valueOf(namespace,name));
-            this.hbaseAdmin.deleteTable(TableName.valueOf(namespace,name));
-            return true ;
+            this.hbaseAdmin.disableTable(TableName.valueOf(namespace, name));
+            this.hbaseAdmin.deleteTable(TableName.valueOf(namespace, name));
+            return true;
         } catch (IOException e) {
-            return false ;
+            return false;
         }
     }
+
     public Set<String> tables() {
-        try{
+        try {
             return Arrays.stream(this.hbaseAdmin.listTableNames())
                     .map(x -> x.getNameAsString())
                     .collect(Collectors.toSet());
-        }
-        catch (Exception e){
-            return null ;
+        } catch (Exception e) {
+            return null;
         }
     }
 
-    public Set<String> columnFamilies(String tableName){
+    public Set<String> columnFamilies(String tableName) {
         try {
             return Arrays.stream(this.hbaseAdmin.getTableDescriptor(TableName.valueOf(tableName))
                     .getColumnFamilies())
-                    .map(x->x.getNameAsString())
+                    .map(x -> x.getNameAsString())
                     .collect(Collectors.toSet());
         } catch (IOException e) {
             e.printStackTrace();
-            return null ;
+            return null;
         }
     }
 

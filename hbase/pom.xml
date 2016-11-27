@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>hadooputilities</artifactId>
@@ -8,7 +8,10 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <hbase.version>1.2.0-cdh5.8.0</hbase.version>
+    </properties>
     <artifactId>hbase</artifactId>
     <build>
         <plugins>
@@ -26,14 +29,14 @@
         <repository>
             <id>java.net</id>
             <url>https://repository.cloudera.com/content/repositories/releases</url>
-           </repository>
+        </repository>
     </repositories>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.hbase</groupId>
             <artifactId>hbase-client</artifactId>
-            <version>1.2.0-cdh5.8.0</version>
+            <version>${hbase.version}</version>
         </dependency>
 
         <dependency>
@@ -45,7 +48,7 @@
         <dependency>
             <groupId>org.apache.hbase</groupId>
             <artifactId>hbase</artifactId>
-            <version>1.2.0-cdh5.8.0</version>
+            <version>${hbase.version}</version>
         </dependency>
 
         <dependency>
@@ -53,6 +56,31 @@
             <artifactId>hadoop-core</artifactId>
             <version>2.6.0-mr1-cdh5.8.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-server</artifactId>
+            <version>${hbase.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-testing-util -->
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-testing-util</artifactId>
+            <version>${hbase.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>org.javatuples</groupId>
+            <artifactId>javatuples</artifactId>
+            <version>1.2</version>
+
+        </dependency>
+
+
+
+
     </dependencies>
 
 </project>

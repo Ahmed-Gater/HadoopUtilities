@@ -36,21 +36,34 @@ public class CSVFileProducer {
     public void sendAll() throws IOException {
         this.parser.forEach(x ->
         {
+            System.out.println(x.toMap().toString());
             this.producer.send(x.toMap().toString(), x.toMap().toString());
-            System.out.println(x);
+            System.out.println(x.toMap().toString());
         }) ;
     }
 
 
     public static void main(String[] args) throws IOException {
-        String filePath = "C:\\Users\\ahmed.gater\\.VirtualBox\\Desktop\\Raw data after import\\Raw data after import.csv" ;
+
+        if (args.length <4){
+            System.out.println("");
+            return ;
+        }
+
+        String filePath = args[0] ; //"C:/Users/ahmed.gater/Documents/data/processmining/process_data.csv" ;
+        char delimiter = args[1].charAt(0) ; // ';'
+        String kafka_bootstrap = args[2] ; //"localhost:9092"
+        String topic = args[3] ; //"spark-streaming-test"
+
         CSVParser parser;
         parser = new CSVParser( new FileReader(filePath),
-                CSVFormat.DEFAULT.withDelimiter(';').withHeader());
-        ProducerConfig cfg = new ProducerConfig.ProducerConfigBuilder("192.168.99.100:9092", "spark-streaming-test")
-                .build();
+                CSVFormat.DEFAULT.withDelimiter(delimiter).withHeader());
+
+
+        ProducerConfig cfg = new ProducerConfig.ProducerConfigBuilder(kafka_bootstrap, topic).build();
 
         CSVFileProducer prod = new CSVFileProducer(parser,cfg) ;
         prod.sendAll();
+
     }
 }

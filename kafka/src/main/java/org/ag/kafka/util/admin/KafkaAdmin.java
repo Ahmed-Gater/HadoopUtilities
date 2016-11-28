@@ -18,20 +18,21 @@ import java.util.Properties;
 import java.util.Set;
 
 //import kafka.tools.GetOffsetShell
+
 /**
  * Created by ahmed.gater on 12/11/2016.
  */
-public class Administrator {
-    AdminConfig config ;
+public class KafkaAdmin {
+    AdminConfig config;
 
-    public Administrator(AdminConfig kafkaCfg){
-        this.config = kafkaCfg ;
+    public KafkaAdmin(AdminConfig kafkaCfg) {
+        this.config = kafkaCfg;
     }
 
 
     public boolean createTopic(String topic, int partitions, int replication, Properties prop) {
         try {
-            if (!topicExists(topic)){
+            if (!topicExists(topic)) {
                 AdminUtils.createTopic(zkUtil(), topic, partitions, replication, prop, RackAwareMode.Disabled$.MODULE$);
             }
             return true;
@@ -47,10 +48,10 @@ public class Administrator {
 
     private ZkClient zkClient() {
         return new ZkClient(
-                    this.config.getZkConnectionString(),
-                    this.config.getSessionTimeoutMs(),
-                    this.config.getConnectionTimeoutMs(),
-                    ZKStringSerializer$.MODULE$);
+                this.config.getZkConnectionString(),
+                this.config.getSessionTimeoutMs(),
+                this.config.getConnectionTimeoutMs(),
+                ZKStringSerializer$.MODULE$);
     }
 
 
@@ -67,30 +68,28 @@ public class Administrator {
         }
     }
 
-    public Set<String> topics(){
-        try{
-           return new HashSet(scala.collection.JavaConversions.seqAsJavaList(zkUtil().getAllTopics()));
-        }
-        catch (Exception e){
-            return null ;
+    public Set<String> topics() {
+        try {
+            return new HashSet(scala.collection.JavaConversions.seqAsJavaList(zkUtil().getAllTopics()));
+        } catch (Exception e) {
+            return null;
         }
     }
 
-    public boolean topicExists(String topic){
-        return AdminUtils.topicExists(zkUtil(),topic) ;
+    public boolean topicExists(String topic) {
+        return AdminUtils.topicExists(zkUtil(), topic);
     }
 
-    public List<PartitionInfo> topicInfo(String topic){
-        Producer<String, String> producer = new KafkaProducer<String,String>
-                (new ProducerConfig.ProducerConfigBuilder(this.config.getKafkaServerBootstrap(),topic).build().getProps());
+    public List<PartitionInfo> topicInfo(String topic) {
+        Producer<String, String> producer = new KafkaProducer<String, String>
+                (new ProducerConfig.ProducerConfigBuilder(this.config.getKafkaServerBootstrap(), topic).build().getProps());
         List<PartitionInfo> partitionInfos = producer.partitionsFor(topic);
         producer.close();
-        return partitionInfos ;
+        return partitionInfos;
     }
 
 
-    public void topicPartitionOffset(){
-
+    public void topicPartitionOffset() {
 
 
     }
